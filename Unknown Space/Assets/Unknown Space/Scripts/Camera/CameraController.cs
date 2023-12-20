@@ -163,8 +163,11 @@ namespace UnknownSpace
         {
             if (m_Camera == null || m_CamTarget == null) return;
 
-            TempSwitchCameraMode();
+            TempSwitchCameraMode();   
+        }
 
+        private void FixedUpdate()
+        {
             CameraMove();
         }
 
@@ -208,10 +211,10 @@ namespace UnknownSpace
 
                 CameraZoom();
 
-                //if (m_Ship.shipCurrentSpeed == 0)
-                //    CamSmoothShake();
-                //else
-                //    m_CamTargetParent.localPosition = LerpVectorWithThreshold(m_CamTargetParent.localPosition, Vector3.zero, Time.deltaTime, CAMERA_MOVE_THRESHOLD);
+                if (m_Ship.LinearVelocity == 0)
+                    CamSmoothShake();
+                else
+                    m_CamTargetParent.localPosition = LerpVectorWithThreshold(m_CamTargetParent.localPosition, Vector3.zero, Time.deltaTime, CAMERA_MOVE_THRESHOLD);
 
                 if (m_CameraModeOnTimer >= m_CameraModeTimeToOn)
                     CameraModeOn();
@@ -224,7 +227,7 @@ namespace UnknownSpace
                 else
                     CamCancelFollowTarget();
 
-                //m_CamTargetRoot.position = Vector3.Lerp(m_CamTargetRoot.position, m_Ship.transform.position, m_Ship.shipMaxSpeed * m_CameraMoveSpeedMult * Time.deltaTime);
+                m_CamTargetRoot.position = Vector3.Lerp(m_CamTargetRoot.position, m_Ship.transform.position, m_Ship.MaxLinearVelocity * m_CameraMoveSpeedMult * Time.deltaTime);
             }
 
             m_Camera.transform.SetPositionAndRotation(m_CamTarget.position, m_CamTarget.rotation);
