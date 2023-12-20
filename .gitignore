@@ -13,6 +13,9 @@ sysinfo.txt
 # Unity3D generated meta files
 *.pidb.meta
 
+# Папка с логами (из-за тяжелых логов воркеров)
+Logs/
+
 ###
 # VS/MD solution and project files
 ###
