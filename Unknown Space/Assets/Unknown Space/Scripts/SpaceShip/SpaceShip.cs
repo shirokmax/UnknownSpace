@@ -5,6 +5,8 @@ namespace UnknownSpace
     [RequireComponent (typeof (Rigidbody))]
     public class SpaceShip : Destructible
     {
+        public const float ALIGN_ON_HORIZON_SPEED_MULT = 0.02f;
+
         /// <summary>
         /// Масса для автоматической установки в Rigidbody.
         /// </summary>
@@ -60,16 +62,21 @@ namespace UnknownSpace
         public float Thrust => m_Thrust;
         public float Mobility => m_Mobility;
         public float LinearVelocity => m_Rigidbody.velocity.magnitude;
+        public float NormalizeLinearVelocity => m_Rigidbody.velocity.magnitude / m_MaxLinearVelocity;
         public float MaxLinearVelocity => m_MaxLinearVelocity;
         public float MinAngularVelocity => m_MaxAngularVelocity;
 
         private Rigidbody m_Rigidbody;
 
+        private float m_LinearVelocityValue = 0;
+
+        private bool alignOnHorizon;
+        private float alignOnHorizonThreshold = 0.05f;
+
         // DEBUG
         [Header("DEBUG")]
         public float Speed;
         public float RotationSpeed;
-        public float m_LinearVelocityValue = 0;
 
         protected override void Awake()
         {
@@ -83,11 +90,14 @@ namespace UnknownSpace
         {
             Speed = LinearVelocity;
             RotationSpeed = m_Rigidbody.angularVelocity.magnitude;
+
+            AlignOnHorizonControl();
         }
 
         private void FixedUpdate()
         {
             UpdateRigidbody();
+            AlignOnHorizon();
         }
 
         private void UpdateRigidbody()
@@ -134,6 +144,39 @@ namespace UnknownSpace
 
             // Замедление поворотов
             m_Rigidbody.AddTorque(-m_Rigidbody.angularVelocity * m_AngularVelocityDeceleration * Time.fixedDeltaTime, ForceMode.Force);
+        }
+
+        /// <summary>
+        /// Выравнивание корабля по горизонту.
+        /// </summary>
+        private void AlignOnHorizon()
+        {
+            if (alignOnHorizon == false) return;
+
+            float rotationX = Mathf.MoveTowardsAngle(transform.rotation.eulerAngles.x, 0f, Time.deltaTime * m_Mobility * ALIGN_ON_HORIZON_SPEED_MULT);
+            float rotationZ = Mathf.MoveTowardsAngle(transform.rotation.eulerAngles.z, 0f, Time.deltaTime * m_Mobility * ALIGN_ON_HORIZON_SPEED_MULT);
+
+            if ((rotationX > 360f - alignOnHorizonThreshold || rotationX < alignOnHorizonThreshold) &&
+                (rotationZ > 360f - alignOnHorizonThreshold || rotationZ < alignOnHorizonThreshold))
+            {
+                transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
+                alignOnHorizon = false;
+                return;
+            }
+
+            transform.rotation = Quaternion.Euler(rotationX, transform.rotation.eulerAngles.y, rotationZ);
+        }
+
+        /// <summary>
+        /// Управление Включением/выключением выравнивания корабля по горизонту.
+        /// </summary>
+        private void AlignOnHorizonControl()
+        {
+            if (Input.GetKeyDown(KeyCode.V) && alignOnHorizon == false)
+                alignOnHorizon = true;
+
+            if (HorizontalTorqueControl != 0 || VerticalTorqueControl != 0 || InclineTorqueControl != 0)
+                alignOnHorizon = false;
         }
     }
 }
