@@ -69,7 +69,7 @@ namespace UnknownSpace
         [Header("DEBUG")]
         public float Speed;
         public float RotationSpeed;
-        float speedValue = 0;
+        public float m_LinearVelocityValue = 0;
 
         protected override void Awake()
         {
@@ -90,21 +90,40 @@ namespace UnknownSpace
             UpdateRigidbody();
         }
 
-        /// <summary>
-        /// Метод добавления сил кораблю для движения.
-        /// </summary>
         private void UpdateRigidbody()
         {
-            // ЗАГОТОВКА ПОД ДВИЖЕНИЕ КОРАБЛЯ //
-            if (m_Rigidbody.velocity.magnitude < m_MaxLinearVelocity)
-                speedValue += ThrustControl * m_Thrust * Time.fixedDeltaTime;
+            LinearMove();
+            AngularMove();
+        }
 
-            if (ThrustControl == 0 && speedValue > 0)
-                speedValue -= m_Thrust * m_LinearVelocityDecelerationMult * Time.fixedDeltaTime;
+        /// <summary>
+        /// Движение корабля с помощью жесткого задания вектора velocity.
+        /// </summary>
+        private void LinearMove()
+        {
+            // Разгон
+            if (m_LinearVelocityValue < m_MaxLinearVelocity)
+                m_LinearVelocityValue += ThrustControl * m_Thrust * Time.fixedDeltaTime;
+            else
+                m_LinearVelocityValue = m_MaxLinearVelocity;
 
-            m_Rigidbody.velocity = speedValue * transform.forward * Time.fixedDeltaTime;
-            ////////////////////////////////////
+            // Замедление
+            if (ThrustControl == 0)
+            {
+                if (m_LinearVelocityValue > 0)
+                    m_LinearVelocityValue -= m_Thrust * m_LinearVelocityDecelerationMult * Time.fixedDeltaTime;
+                else
+                    m_LinearVelocityValue = 0;
+            }
 
+            m_Rigidbody.velocity = transform.forward * m_LinearVelocityValue;
+        }
+
+        /// <summary>
+        /// Вращение корабля с помощью добавления вращательной силы AddTorque.
+        /// </summary>
+        private void AngularMove()
+        {
             // Ускорение поворота по горизонтальной оси с ограничением по скорости
             if (m_Rigidbody.angularVelocity.magnitude < m_MaxAngularVelocity)
             {

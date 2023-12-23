@@ -4320,7 +4320,7 @@ MonoBehaviour:
   ringThickness: 50
   targetWidth: 50
   targetWidthPositionOffset: 89.4
-  showFieldGizmo: 1
+  showFieldGizmo: 0
   showBufferGizmo: 0
   enableMeshes: 1
   enableColliders: 1
@@ -28078,14 +28078,15 @@ MonoBehaviour:
   m_TeamId: 1
   m_FriendlyFirePercentage: 0
   m_Mass: 100
-  m_Thrust: 100
+  m_Thrust: 1
   m_Mobility: 1500
   m_MaxLinearVelocity: 6
   m_MaxAngularVelocity: 0.5
-  m_LinearVelocityDecelerationMult: 2
+  m_LinearVelocityDecelerationMult: 1.2
   m_AngularVelocityDeceleration: 3000
   Speed: 0
   RotationSpeed: 0
+  m_LinearVelocityValue: 0
 --- !u!54 &1221842964
 Rigidbody:
   m_ObjectHideFlags: 0
