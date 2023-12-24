@@ -3,11 +3,9 @@ using UnityEngine;
 namespace UnknownSpace
 {
     [RequireComponent (typeof (Camera))]
-    public class CameraController : MonoBehaviour
+    public class CameraController : MonoBehaviour, IDependency<SpaceShip>
     {
         #region Properties
-        [SerializeField] private SpaceShip m_Ship;
-
         /// <summary>
         ///  орневой пустой объект камеры. (нужен дл€ закреплени€ движени€ камеры по оси Z)
         /// </summary>
@@ -73,6 +71,9 @@ namespace UnknownSpace
         /// ¬еличина, на которую камера поднимаетс€ вверх над кораблем при следовании за целью.
         /// </summary>
         [Space][SerializeField] private float m_CamFollowTargetOffsetZ;
+
+        private SpaceShip m_TargetShip;
+        public void Construct(SpaceShip obj) => m_TargetShip = obj;
 
         private Camera m_Camera;
 
@@ -205,13 +206,13 @@ namespace UnknownSpace
             }
 
             // ≈сли корабль уничтожен, то остаетс€ только движение камеры мышкой.
-            if (m_Ship != null)
+            if (m_TargetShip != null)
             {
                 m_CameraModeOnTimer += Time.deltaTime;
 
                 CameraZoom();
 
-                if (m_Ship.LinearVelocity == 0)
+                if (m_TargetShip.LinearVelocity == 0)
                     CamSmoothShake();
                 else
                     m_CamTargetParent.localPosition = LerpVectorWithThreshold(m_CamTargetParent.localPosition, Vector3.zero, Time.deltaTime, CAMERA_MOVE_THRESHOLD);
@@ -227,7 +228,7 @@ namespace UnknownSpace
                 else
                     CamCancelFollowTarget();
 
-                m_CamTargetRoot.position = Vector3.Lerp(m_CamTargetRoot.position, m_Ship.transform.position, m_Ship.MaxLinearVelocity * m_CameraMoveSpeedMult * Time.deltaTime);
+                m_CamTargetRoot.position = Vector3.Lerp(m_CamTargetRoot.position, m_TargetShip.transform.position, m_TargetShip.MaxLinearVelocity * m_CameraMoveSpeedMult * Time.deltaTime);
             }
 
             m_Camera.transform.SetPositionAndRotation(m_CamTarget.position, m_CamTarget.rotation);
@@ -325,9 +326,9 @@ namespace UnknownSpace
         /// </summary>
         private void CamFollow()
         {
-            SetCamTargetRootRotation(m_Ship.transform.rotation);
+            SetCamTargetRootRotation(m_TargetShip.transform.rotation);
 
-            m_CamTargetParent.rotation = Quaternion.Slerp(m_CamTargetParent.rotation, m_Ship.transform.rotation, m_CameraLerpRatio * Time.deltaTime);
+            m_CamTargetParent.rotation = Quaternion.Slerp(m_CamTargetParent.rotation, m_TargetShip.transform.rotation, m_CameraLerpRatio * Time.deltaTime);
         }
 
         /// <summary>

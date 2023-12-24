@@ -2,9 +2,10 @@ using UnityEngine;
 
 namespace UnknownSpace
 {
-    public class SpaceShipController : MonoBehaviour
+    public class SpaceShipController : MonoBehaviour, IDependency<SpaceShip>
     {
-        [SerializeField] private SpaceShip m_TargetShip;
+        private SpaceShip m_TargetShip;
+        public void Construct(SpaceShip obj) => m_TargetShip = obj;
 
         private void Update()
         {
