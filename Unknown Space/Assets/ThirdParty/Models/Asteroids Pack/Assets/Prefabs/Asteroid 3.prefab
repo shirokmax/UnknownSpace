@@ -74,6 +74,7 @@ GameObject:
   - component: {fileID: 5428902}
   - component: {fileID: 11467940}
   - component: {fileID: -3670369893412751177}
+  - component: {fileID: 6556547652722912776}
   m_Layer: 0
   m_Name: Asteroid 3
   m_TagString: Enemy
@@ -162,6 +163,24 @@ MonoBehaviour:
   collidersToHide: []
   ShowColliders: 1
   HasCollision: 0
+--- !u!114 &6556547652722912776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 130102}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e880ba125343bd6478a5675f59304841, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Nickname: Asteroid
+  m_Type: 1
+  m_Indestructible: 0
+  m_MaxHitPoints: 1000
+  m_TeamId: 0
+  m_FriendlyFirePercentage: 0
 --- !u!1 &153142
 GameObject:
   m_ObjectHideFlags: 0

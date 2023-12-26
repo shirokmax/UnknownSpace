@@ -5,6 +5,7 @@ namespace UnknownSpace
     public class Bursts : MonoBehaviour, IDependency<SpaceShip>
     {
         [SerializeField] private ParticleSystem[] m_Particles;
+        [SerializeField] private float m_MinSpeed = 0.05f;
         [SerializeField] private float m_MaxSpeed = 0.2f;
 
         private SpaceShip m_Ship;
@@ -23,7 +24,7 @@ namespace UnknownSpace
         private void Update()
         {
             for (int i = 0; i < m_BurstsMains.Length; i++)
-                m_BurstsMains[i].startSpeed = m_Ship.ThrustControl * m_MaxSpeed;
+                m_BurstsMains[i].startSpeed = m_MinSpeed + m_Ship.ThrustControl * (m_MaxSpeed - m_MinSpeed);
         }
     }
 }
