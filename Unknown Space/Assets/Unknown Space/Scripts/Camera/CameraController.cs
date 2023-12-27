@@ -3,7 +3,7 @@ using UnityEngine;
 namespace UnknownSpace
 {
     [RequireComponent (typeof (Camera))]
-    public class CameraController : MonoBehaviour, IDependency<SpaceShip>
+    public class CameraController : MonoBehaviour, IDependency<SpaceShip>,IDependency<UITargetSelection>
     {
         #region Properties
         /// <summary>
@@ -21,7 +21,6 @@ namespace UnknownSpace
         /// <summary>
         /// Ссылка на класс, через который получаем переменную, хранящую позицию выделенной цели.
         /// </summary>
-        //[SerializeField] private Interface m_InterfaceScript;
 
         /// <summary>
         /// Переключаемый режим камеры. (Свободная камера, следование за кораблем, следование за целью)
@@ -74,6 +73,9 @@ namespace UnknownSpace
 
         private SpaceShip m_TargetShip;
         public void Construct(SpaceShip obj) => m_TargetShip = obj;
+
+        private UITargetSelection m_TargetSelection;
+        public void Construct(UITargetSelection obj) => m_TargetSelection = obj;
 
         private Camera m_Camera;
 
@@ -266,13 +268,13 @@ namespace UnknownSpace
             if (m_CameraMode == CameraMode.FollowShip)
                 FollowShipOn();
 
-            //if (m_CameraMode == CameraMode.FollowTarget)
-            //{
-            //    if (m_InterfaceScript.targetObj != null)
-            //        FollowTargetOn();
-            //    else
-            //        FollowShipOn();
-            //}
+            if (m_CameraMode == CameraMode.FollowTarget)
+            {
+                if (m_TargetSelection.CurrentTarget != null)
+                    FollowTargetOn();
+                else
+                    FollowShipOn();
+            }
         }
 
         /// <summary>
@@ -347,14 +349,14 @@ namespace UnknownSpace
         /// </summary>
         private void CamFollowTarget()
         {
-            //Vector3 dir = m_InterfaceScript.targetObj.position - m_CamTargetParent.position;
+            Vector3 dir = m_TargetSelection.CurrentTarget.transform.position - m_CamTargetParent.position;
 
-            //SetCamTargetRootRotation(Quaternion.LookRotation(dir));
+            SetCamTargetRootRotation(Quaternion.LookRotation(dir));
 
-            //m_CamTargetParent.rotation = Quaternion.Slerp(m_CamTargetParent.rotation, Quaternion.LookRotation(dir), m_CameraLerpRatio * Time.deltaTime);
+            m_CamTargetParent.rotation = Quaternion.Slerp(m_CamTargetParent.rotation, Quaternion.LookRotation(dir), m_CameraLerpRatio * Time.deltaTime);
 
-            //Vector3 target = new Vector3(m_CamTarget.localPosition.x, m_CamTargetStartLocalPos.y + m_CamFollowTargetOffsetZ, m_CamTarget.localPosition.z);
-            //m_CamTarget.localPosition = LerpVectorWithThreshold(m_CamTarget.localPosition, target, m_CameraLerpRatio * Time.deltaTime, CAMERA_MOVE_THRESHOLD);
+            Vector3 target = new Vector3(m_CamTarget.localPosition.x, m_CamTargetStartLocalPos.y + m_CamFollowTargetOffsetZ, m_CamTarget.localPosition.z);
+            m_CamTarget.localPosition = LerpVectorWithThreshold(m_CamTarget.localPosition, target, m_CameraLerpRatio * Time.deltaTime, CAMERA_MOVE_THRESHOLD);
         }
 
         /// <summary>

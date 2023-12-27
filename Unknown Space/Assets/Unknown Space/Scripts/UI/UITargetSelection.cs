@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace UnknownSpace
 {
-    public class UITargetSelect : MonoBehaviour, IDependency<SpaceShip>
+    public class UITargetSelection : MonoBehaviour, IDependency<SpaceShip>
     {
         [SerializeField] private Camera m_Camera;
         [SerializeField] private GameObject m_TargetFrame;
